@@ -52,10 +52,35 @@ AUnrealGAS_1Character::AUnrealGAS_1Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// Create Ability System Component
+	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("ABilitysystemComponent"));
+
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
+
+void AUnrealGAS_1Character::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsValid(AbilitySystemComponent))
+	{
+		// Get DataAsset as UMyAttributeSet
+		AttributeSetVar = AbilitySystemComponent->GetSet<UMyAttributeSet>();
+		if (AttributeSetVar != nullptr)
+		{
+
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing AbilitySystemCopmonent."), *FString(__FUNCTION__));
+	}
+}
 
 void AUnrealGAS_1Character::NotifyControllerChanged()
 {
@@ -90,6 +115,11 @@ void AUnrealGAS_1Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+UMyAbilitySystemComponent* AUnrealGAS_1Character::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 void AUnrealGAS_1Character::Move(const FInputActionValue& Value)

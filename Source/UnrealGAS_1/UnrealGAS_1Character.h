@@ -5,7 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+
+// Ability System
+#include "MyAbilitySystemComponent.h"
+// Attribute
+#include "MyAttributeSet.h"
+
 #include "UnrealGAS_1Character.generated.h"
+
+class UMyAbilitySystemComponent;
+class UMyAttributeSet;
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -47,6 +56,24 @@ class AUnrealGAS_1Character : public ACharacter
 public:
 	AUnrealGAS_1Character();
 	
+public:
+	// Add AbilitySystemComponent
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="GASGamePlayAbility")
+	class UMyAbilitySystemComponent* AbilitySystemComponent;
+
+	virtual class UMyAbilitySystemComponent* GetAbilitySystemComponent() const;
+
+	// Character Info
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GASGamePlayAbility")
+	const class UMyAttributeSet* AttributeSetVar;
+
+	// Add a character's skill initially in the editor
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GASGamePlayAbility")
+	TArray<TSubclassOf<class UGameplayAbility>> InitialAbilities;
+
+	// Skill GameAbility, Set initial ability
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GASGamePlayAbility")
+	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 protected:
 
@@ -58,6 +85,7 @@ protected:
 			
 
 protected:
+	virtual void BeginPlay() override;
 
 	virtual void NotifyControllerChanged() override;
 
