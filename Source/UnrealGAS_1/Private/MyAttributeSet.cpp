@@ -13,9 +13,9 @@ void UMyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet, Health, OldHealth);
 }
 
-void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const
+void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(OutLifeTimeProps);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Health, COND_None, REPNOTIFY_Always);
 }
 
@@ -26,7 +26,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) // 체력이 변경된거면
 	{
 		// GetHealth() - Get Changed Value
-		SetHealth(FMath::Clamp(GetHealth(), 0.1f, 1000.0f); // Set Health between 0~1000
-		HealthChangeDelegate.Broadcast(GetHealth(), Data.EffectSpec.StackCount);
+		SetHealth(FMath::Clamp(GetHealth(), 0.1f, 1000.0f)); // Set Health between 0~1000
+		OnHealthChangeDelegate.Broadcast(GetHealth(), Data.EffectSpec.StackCount);
 	}
 }

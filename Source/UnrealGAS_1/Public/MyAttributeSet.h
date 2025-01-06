@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "MyAbilitySystemComponent.h"
 #include "MyAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -33,7 +34,7 @@ public:
 	FAttributeChangeDelegate OnHealthChangeDelegate;
 
 	// Set with Deligate, you need this to call delegate
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
 	UFUNCTION()

@@ -76,7 +76,70 @@ public:
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 protected:
+	// Inherited from the Character, Called when the player gained control of the character
+	virtual void PossessedBy(AController* NewController) override;
+	
+	// Inherited from the Pawn, calling if character status has changed
+	virtual void OnRep_PlayerState();
 
+public: 
+	// Function about skill.
+	// Initialize One Skill Ability
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
+	void InitializeAbility(TSubclassOf<class UGameplayAbility> AbilityToGet, int32 AbilityLevel);
+
+	// Initialize Multiple Skill Ability
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
+	void InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel);
+
+public:
+	// Fuction about Game Ability Tag System
+	
+	// struct FGameplayTagContainer can contain multiple tags.
+	
+	// Delete Tag
+	UFUNCTION(BlueprintCallable,Category="GASGamePlayAbilityTag")
+	void RemoveAbilityWithTags(FGameplayTagContainer TagContiner);
+
+	// Cancel Tag
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilityTag")
+	void CancelAbilityWithTag(FGameplayTagContainer WithTag, FGameplayTagContainer WithoutTag);
+
+	// Add One Tag
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilityTag")
+	void AddLooseGamePlayTag(FGameplayTag TagToAdd);
+	
+	// Remove One Tag
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilityTag")
+	void RemoveLooseGamePlayTag(FGameplayTag TagToAdd);
+	
+	// Change Tag, Changing the tag level is similar to changing the skill level in a game
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilityTag")
+	void ChangeAbilityLevelWithTags(FGameplayTagContainer TagContiner, int32 Level);
+
+public:
+	// Functions about Character Attributes
+	// Called when Health changed
+	UFUNCTION()
+	void OnHealthChangeNative(float Health, int32 StackCount);
+
+	// when the event occurs  in Blueprint
+	UFUNCTION(BlueprintImplementableEvent, Category = "GASGamePlayAbility")
+	void OnHealthChanged(float Health, int32 StackCount);
+
+	// Use to bring current Health, no pure implementation
+	UFUNCTION(BlueprintPure, Category = "GASGamePlayAbility")
+	void HealthValues(float& Health, float& MaxHealth);
+
+	// Just Get Call
+	UFUNCTION(BlueprintPure, Category = "GASGamePlayAbility")
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintPure, Category = "GASGamePlayAbility")
+	float GetMaxHealth() const;
+
+
+protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 

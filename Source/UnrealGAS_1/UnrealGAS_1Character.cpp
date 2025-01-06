@@ -73,7 +73,7 @@ void AUnrealGAS_1Character::BeginPlay()
 		AttributeSetVar = AbilitySystemComponent->GetSet<UMyAttributeSet>();
 		if (AttributeSetVar != nullptr)
 		{
-
+			const_cast<UMyAttributeSet*>(AttributeSetVar)->OnHealthChangeDelegate.AddDynamic(this, &AUnrealGAS_1Character::OnHealthChangeNative);
 		}
 	}
 	else
@@ -120,6 +120,124 @@ void AUnrealGAS_1Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 UMyAbilitySystemComponent* AUnrealGAS_1Character::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AUnrealGAS_1Character::ChangeAbilityLevelWithTags(FGameplayTagContainer TagContiner, int32 Level)
+{
+	// Delete Multiple Tags
+	TArray<struct FGameplayAbilitySpec*> MatchingAbilities;
+	// Compare the tags currently have and get them if they match the containers put in as parameters
+	AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContiner, MatchingAbilities, true);
+	for (FGameplayAbilitySpec* Spec : MatchingAbilities)
+	{
+		Spec->Level = Level;
+	}
+}
+
+void AUnrealGAS_1Character::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (IsValid(AbilitySystemComponent))
+	{
+		// Deliver to call actors that use the system from the availability system
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		//Set the level of all skills set in the editor to 1
+		InitializeAbilityMulti(InitialAbilities, 1);
+	}
+}
+
+void AUnrealGAS_1Character::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	// For using the right actor on the server, need to set it up here as well.
+	if (IsValid(AbilitySystemComponent))
+	{
+		// Deliver to call actors that use the system from the availability system
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		// Set the level of all skills set in the editor to 1
+		InitializeAbilityMulti(InitialAbilities, 1);
+	}
+}
+
+void AUnrealGAS_1Character::InitializeAbility(TSubclassOf<class UGameplayAbility> AbilityToGet, int32 AbilityLevel)
+{
+	// Add availability only when it's a server, meaningless if it's not a server
+	if (HasAuthority())
+	{
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityToGet, AbilityLevel));
+	}
+}
+
+void AUnrealGAS_1Character::InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel)
+{
+	// Add availability only when it's a server, meaningless if it's not a server
+	if (HasAuthority())
+	{
+		// Add them all one by one
+		for (TSubclassOf<class UGameplayAbility>& AbilityItem : AbilityToAcquire)
+		{
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityItem, AbilityLevel));
+		}
+	}
+}
+
+void AUnrealGAS_1Character::RemoveAbilityWithTags(FGameplayTagContainer TagContiner)
+{
+	// Delete Multiple Tags
+	TArray<struct FGameplayAbilitySpec*> MatchingAbilities;
+	// Compare the tags currently have and get them if they match the containers put in as parameters
+	AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContiner, MatchingAbilities, true);
+	for (FGameplayAbilitySpec* Spec : MatchingAbilities)
+	{
+		AbilitySystemComponent->ClearAbility(Spec->Handle);
+	}
+}
+
+void AUnrealGAS_1Character::CancelAbilityWithTag(FGameplayTagContainer WithTag, FGameplayTagContainer WithoutTag)
+{
+	AbilitySystemComponent->CancelAbilities(&WithTag, &WithoutTag, nullptr);
+}
+
+void AUnrealGAS_1Character::AddLooseGamePlayTag(FGameplayTag TagToAdd)
+{
+	AbilitySystemComponent->AddLooseGameplayTag(TagToAdd);
+	AbilitySystemComponent->SetTagMapCount(TagToAdd, 1);
+}
+
+void AUnrealGAS_1Character::RemoveLooseGamePlayTag(FGameplayTag TagToAdd)
+{
+	AbilitySystemComponent->RemoveLooseGameplayTag(TagToAdd);
+}
+
+void AUnrealGAS_1Character::OnHealthChangeNative(float Health, int32 StackCount)
+{
+	// BlueprintImposableEvent function, so call it here, it's also called in Blueprint.
+	OnHealthChanged(Health, StackCount);
+	if (Health <= 0)
+	{
+		//Dead.
+	}
+}
+
+void AUnrealGAS_1Character::HealthValues(float& Health, float& MaxHealth)
+{
+	if (IsValid(AttributeSetVar))
+	{
+		Health = AttributeSetVar->GetHealth();
+		MaxHealth = 1000.0f; // Temporary value
+	}
+}
+
+float AUnrealGAS_1Character::GetHealth() const
+{
+	return AttributeSetVar->GetHealth();
+}
+
+float AUnrealGAS_1Character::GetMaxHealth() const
+{
+	return 1000.0f; // Temporary value
 }
 
 void AUnrealGAS_1Character::Move(const FInputActionValue& Value)
