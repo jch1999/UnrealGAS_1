@@ -75,6 +75,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GASGamePlayAbility")
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
+	// Skill GameAbility, Standard, Health Recovery, Mana Recovery, etc
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GASGamePlayAbility")
+	TArray<TSubclassOf<class UGameplayEffect>> StartUpEffects;
+
 protected:
 	// Inherited from the Character, Called when the player gained control of the character
 	virtual void PossessedBy(AController* NewController) override;
@@ -84,11 +88,18 @@ protected:
 
 public: 
 	// Function about skill.
+	
+	void InitializeAttribute();
+	void AddStartUpEffects();
+
 	// Initialize One Skill Ability
 	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
 	void InitializeAbility(TSubclassOf<class UGameplayAbility> AbilityToGet, int32 AbilityLevel);
 
 	// Initialize Multiple Skill Ability
+	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
+	void InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel);
+
 	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
 	void InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel);
 

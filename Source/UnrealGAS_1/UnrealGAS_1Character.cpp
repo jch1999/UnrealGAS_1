@@ -74,6 +74,9 @@ void AUnrealGAS_1Character::BeginPlay()
 		if (AttributeSetVar != nullptr)
 		{
 			const_cast<UMyAttributeSet*>(AttributeSetVar)->OnHealthChangeDelegate.AddDynamic(this, &AUnrealGAS_1Character::OnHealthChangeNative);
+
+			InitializeAttribute();
+			AddStartUpEffects();
 		}
 	}
 	else
@@ -161,6 +164,57 @@ void AUnrealGAS_1Character::OnRep_PlayerState()
 	}
 }
 
+void AUnrealGAS_1Character::InitializeAttribute()
+{
+	if (!IsValid(AbilitySystemComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing AbilitySystemCopmonent."), *FString(__FUNCTION__));
+		return;
+	}
+	if (!IsValid(DefaultAttributes))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes."), *FString(__FUNCTION__));
+		return;
+	} 
+
+	// Create Effect Handle
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this); // Set Target to Apply.
+
+	FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, 0, EffectContext);
+	if (NewHandle.IsValid())
+	{
+		AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+	}
+}
+
+void AUnrealGAS_1Character::AddStartUpEffects()
+{
+	if (!IsValid(AbilitySystemComponent) || 
+		GetLocalRole() != ROLE_Authority || 
+		AbilitySystemComponent->StartUpEffectSupplied)
+	{
+		return;
+	}
+
+	// Create Effect Handle
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this); // Set Target to Apply.
+
+	
+	for (TSubclassOf<class UGameplayEffect> GameplayEffect : StartUpEffects)
+	{
+		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, 0, EffectContext);
+
+		if (NewHandle.IsValid())
+		{
+			AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+		}
+	}
+
+	AbilitySystemComponent->StartUpEffectSupplied = true;
+}
+
 void AUnrealGAS_1Character::InitializeAbility(TSubclassOf<class UGameplayAbility> AbilityToGet, int32 AbilityLevel)
 {
 	// Add availability only when it's a server, meaningless if it's not a server
@@ -232,12 +286,20 @@ void AUnrealGAS_1Character::HealthValues(float& Health, float& MaxHealth)
 
 float AUnrealGAS_1Character::GetHealth() const
 {
-	return AttributeSetVar->GetHealth();
+	if (IsValid(AttributeSetVar))
+	{
+		return AttributeSetVar->GetHealth();
+	}
+	return 0.0f;
 }
 
 float AUnrealGAS_1Character::GetMaxHealth() const
 {
-	return 1000.0f; // Temporary value
+	if (IsValid(AttributeSetVar))
+	{
+		return 1000.0f; // Temporary value
+	}
+	return 0.0f;
 }
 
 void AUnrealGAS_1Character::Move(const FInputActionValue& Value)

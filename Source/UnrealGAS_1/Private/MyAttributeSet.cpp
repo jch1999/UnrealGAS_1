@@ -26,7 +26,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) // 체력이 변경된거면
 	{
 		// GetHealth() - Get Changed Value
-		SetHealth(FMath::Clamp(GetHealth(), 0.1f, 1000.0f)); // Set Health between 0~1000
+		SetHealth(FMath::Clamp(GetHealth(), 0.0f, 1000.0f)); // Set Health between 0~1000
 		OnHealthChangeDelegate.Broadcast(GetHealth(), Data.EffectSpec.StackCount);
 	}
 }
