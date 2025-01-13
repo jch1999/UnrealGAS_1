@@ -272,6 +272,7 @@ void AUnrealGAS_1Character::OnHealthChangeNative(float Health, int32 StackCount)
 	if (Health <= 0)
 	{
 		//Dead.
+		Die();
 	}
 }
 
@@ -300,6 +301,33 @@ float AUnrealGAS_1Character::GetMaxHealth() const
 		return 1000.0f; // Temporary value
 	}
 	return 0.0f;
+}
+
+void AUnrealGAS_1Character::Die()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale = 0.0f;
+	GetCharacterMovement()->Velocity = FVector(0.0f);
+
+	if (IsValid(AbilitySystemComponent))
+	{
+		// Cancel All Active Abiliities
+		AbilitySystemComponent->CancelAbilities();
+
+		// Add Die Tag on Player
+		FGameplayTag DieEffectTag = FGameplayTag::RequestGameplayTag(FName("Die"));
+		
+
+		FGameplayTagContainer gameplayTag{ DieEffectTag };
+
+		// Check if Tags are attached, execute it.
+		bool IsSuccess = AbilitySystemComponent->TryActivateAbilitiesByTag(gameplayTag);
+		if (IsSuccess == false) // if these are not attached, just attach the tag.
+		{
+			AbilitySystemComponent->AddLooseGameplayTag(DieEffectTag);
+			FinishDying();
+		}
+	}
 }
 
 void AUnrealGAS_1Character::Move(const FInputActionValue& Value)

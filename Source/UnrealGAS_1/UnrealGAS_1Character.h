@@ -146,6 +146,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GASGamePlayAbility")
 	float GetMaxHealth() const;
 
+public:
+	void Die();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GASGameAbility")
+	void FinishDying();
 
 protected:
 	/** Called for movement input */
