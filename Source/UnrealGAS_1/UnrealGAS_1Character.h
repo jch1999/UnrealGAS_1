@@ -100,9 +100,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
 	void InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel);
 
-	UFUNCTION(BlueprintCallable, Category = "GASGamePlayAbilitySkill")
-	void InitializeAbilityMulti(TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquire, int32 AbilityLevel);
-
 public:
 	// Fuction about Game Ability Tag System
 	
