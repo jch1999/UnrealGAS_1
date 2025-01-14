@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -50,6 +52,10 @@ AUnrealGAS_1Character::AUnrealGAS_1Character()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create WidgetComponent
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComp->SetupAttachment(RootComponent);
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
@@ -65,6 +71,18 @@ AUnrealGAS_1Character::AUnrealGAS_1Character()
 
 void AUnrealGAS_1Character::BeginPlay()
 {
+
+	if (HeadUpWidgetClass != nullptr)
+	{
+		//if (Cast<APlayerController>(GetInstigatorController()))
+		//{
+			WidgetComp->SetWidgetClass(HeadUpWidgetClass);
+			WidgetComp->SetRelativeLocation(FVector(0, 0, 120.0f));
+			WidgetComp->SetDrawSize(FVector2D(240, 30));
+			WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		//}
+	}
+
 	Super::BeginPlay();
 
 	if (IsValid(AbilitySystemComponent))
