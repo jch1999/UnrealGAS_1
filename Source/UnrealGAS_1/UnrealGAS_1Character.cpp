@@ -74,13 +74,13 @@ void AUnrealGAS_1Character::BeginPlay()
 
 	if (HeadUpWidgetClass != nullptr)
 	{
-		//if (Cast<APlayerController>(GetInstigatorController()))
-		//{
+		/*if (Cast<APlayerController>(GetInstigatorController()))
+		{
 			WidgetComp->SetWidgetClass(HeadUpWidgetClass);
 			WidgetComp->SetRelativeLocation(FVector(0, 0, 120.0f));
 			WidgetComp->SetDrawSize(FVector2D(240, 30));
 			WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
-		//}
+		}*/
 	}
 
 	Super::BeginPlay();
