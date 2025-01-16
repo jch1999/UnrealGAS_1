@@ -54,12 +54,6 @@ class AUnrealGAS_1Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* WidgetComp;
-
-	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UUserWidget> HeadUpWidgetClass;
-
 public:
 	AUnrealGAS_1Character();
 	

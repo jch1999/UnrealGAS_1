@@ -22,7 +22,7 @@ void AMyHUD::CreateHUD()
 	}
 
 	// Create widget
-	UIHUDWidget = CreateWidget<UHUDWidget>(this, UIHudWidgetClass);
+	UIHUDWidget = CreateWidget<UHUDWidget>(GetWorld(), UIHudWidgetClass);
 	// Put it in a viewport and print it out on the screen
 	UIHUDWidget->AddToViewport();
 

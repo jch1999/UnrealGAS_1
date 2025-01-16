@@ -9,17 +9,18 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
-	// if it isn't my own controller, don't create it.
-	if (!IsLocalController())
-	{
-		return;
-	}
 	AHUD* Hud = GetHUD();
 	if (IsValid(Hud))
 	{
 		AMyHUD* MyHud = Cast<AMyHUD>(Hud);
 		if (IsValid(MyHud))
 		{
+			// if it isn't my own controller, don't create it.
+			if (!IsLocalController())
+			{
+				return;
+			}
+
 			MyHud->CreateHUD();
 			MyHud->SpawnPlayerStateSetting(Cast<AUnrealGAS_1Character>(aPawn));
 		}
@@ -30,11 +31,6 @@ void AMyPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	// if it isn't my own controller, don't create it.
-	if (!IsLocalController())
-	{
-		return;
-	}
 
 	AHUD* Hud = GetHUD();
 	if (IsValid(Hud))
@@ -42,8 +38,13 @@ void AMyPlayerController::OnRep_PlayerState()
 		AMyHUD* MyHud = Cast<AMyHUD>(Hud);
 		if (IsValid(MyHud))
 		{
-			MyHud->CreateHUD();
-			MyHud->SpawnPlayerStateSetting(Cast<AUnrealGAS_1Character>(aPawn));
+			// if it isn't my own controller, don't create it.
+			if (!IsLocalController())
+			{
+				return;
+			}
+
+			MyHud->SpawnPlayerStateSetting(Cast<AUnrealGAS_1Character>(GetCharacter()));
 		}
 	}
 }
