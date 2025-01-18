@@ -39,7 +39,7 @@ UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttriutesChange
 
     if (!IsValid(AbilitySystemComponent) || !(Attributes.Num() < 1))
     {
-        // Remove created object. It automatically removed later because it cretaed by unreal.
+        // Remove created object. It automatically removed later because it owned to unreal.
         WaitForAttributeChangeTask->RemoveFromRoot();
         return nullptr;
     }
@@ -60,6 +60,10 @@ void UAsyncTaskAttributeChanged::EndTask()
     if (IsValid(ASC))
     {
         ASC->GetGameplayAttributeValueChangeDelegate(AttributeToListenFor).RemoveAll(this);
+        for (FGameplayAttribute Attribute : AttributesToListenFor)
+        {
+            ASC->GetGameplayAttributeValueChangeDelegate(Attribute).RemoveAll(this);
+        }
     }
 
     // Remove created task.
