@@ -300,7 +300,7 @@ float AUnrealGAS_1Character::GetMaxHealth() const
 {
 	if (IsValid(AttributeSetVar))
 	{
-		return 1000.0f; // Temporary value
+		return AttributeSetVar->GetMaxHealth(); // Temporary value
 	}
 	return 0.0f;
 }

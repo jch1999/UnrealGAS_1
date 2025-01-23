@@ -33,11 +33,23 @@ public:
 	// Deligates to operate when current Health changes
 	FAttributeChangeDelegate OnHealthChangeDelegate;
 
+	// The functinon placed in ReplicatedUsing will be used when MaxHealth valued changed.
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes", ReplicatedUsing = OnRep_Health)
+	FGameplayAttributeData MaxHealth;
+
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, MaxHealth); // Create Function whitch manage MaxHealth.
+
+	// Deligates to operate when current MaxHealth changes
+	FAttributeChangeDelegate OnMaxHealthChangeDelegate;
+
 	// Set with Deligate, you need this to call delegate
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
 	UFUNCTION()
 	virtual void OnRep_Health(const struct FGameplayAttributeData& OldHealth);
+
+	UFUNCTION()
+	virtual void OnRep_MaxHealth(const struct FGameplayAttributeData& OldMaxHealth);
 	
 };
