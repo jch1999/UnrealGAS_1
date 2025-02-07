@@ -10,7 +10,7 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 	
 	// if it isn't my own controller, don't create it.
-	if (!IsLocalController())
+	if (!IsLocalPlayerController())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Is not local controller"));
 		return;
@@ -45,7 +45,7 @@ void AMyPlayerController::OnRep_PlayerState()
 		if (IsValid(MyHud))
 		{
 			// if it isn't my own controller, don't create it.
-			if (!IsLocalController())
+			if (!IsLocalPlayerController())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Is not local controller"));
 				return;
