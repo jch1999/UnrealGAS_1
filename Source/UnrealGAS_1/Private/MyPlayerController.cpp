@@ -2,27 +2,28 @@
 #include "MyHUD.h"
 #include "HUDWidget.h"
 #include "UnrealGAS_1\UnrealGAS_1Character.h"
+#include "HUDWidget.h"
 
 void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 	
-	GetHudTryCnt = 0;
-	SetHudWidget();
+	// GetHudTryCnt = 0;
+	// SetHudWidget();
 }
 
 void AMyPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	GetHudTryCnt = 0;
-	SetHudWidget();
+	// GetHudTryCnt = 0;
+	// SetHudWidget();
 }
 
 void AMyPlayerController::SetHudWidget()
 {
 	// if it isn't my own controller, don't create it.
-	if (!IsLocalPlayerController())
+	/*if (!IsLocalPlayerController())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Is not local controller"));
 		return;
@@ -49,44 +50,43 @@ void AMyPlayerController::SetHudWidget()
 		{
 			GetWorld()->GetTimerManager().SetTimer(TimerForGetHUD, this, &AMyPlayerController::SetHudWidget, 0.2f, false, 0.2f);
 		}
-	}
+	}*/
 }
 
-//void AMyPlayerController::CreateHUD()
-//{
-//	// if it already exsit, don't operate.
-//	if (UIHUDWidget != nullptr)
-//	{
-//		return;
-//	}
-//
-//	// Must have origin class, which put in the editor.
-//	if (UIHudWidgetClass == nullptr)
-//	{
-//		// Show Error msg with Function name.
-//		UE_LOG(LogTemp, Error, TEXT("%s() Missing UIHUDWidgetClass."), *FString(__FUNCTION__));
-//		return;
-//	}
-//
-//	// Create widget
-//	UIHUDWidget = CreateWidget<UHUDWidget>(GetWorld(), UIHudWidgetClass);
-//	// Put it in a viewport and print it out on the screen
-//	UIHUDWidget->AddToViewport();
-//
-//}
-//
-//UHUDWidget* AMyPlayerController::GetHUD()
-//{
-//	return UIHUDWidget;
-//}
-//
-//void AMyPlayerController::SpawnPlayerStateSetting(AUnrealGAS_1Character* player)
-//{
-//	if (player && UIHUDWidget)
-//	{
-//		UIHUDWidget->SetPlayer(player);
-//		UIHUDWidget->SetCurrentHealth(player->GetHealth());
-//		UIHUDWidget->SetMaxHealth(player->GetMaxHealth());
-//	}
-//}
+void AMyPlayerController::CreateHUD()
+{
+	// if it already exsit, don't operate.
+	if (UIHUDWidget != nullptr)
+	{
+		return;
+	}
 
+	// Must have origin class, which put in the editor.
+	if (UIHudWidgetClass == nullptr)
+	{
+		// Show Error msg with Function name.
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing UIHUDWidgetClass."), *FString(__FUNCTION__));
+		return;
+	}
+
+	// Create widget
+	UIHUDWidget = CreateWidget<UHUDWidget>(GetWorld(), UIHudWidgetClass);
+	// Put it in a viewport and print it out on the screen
+	UIHUDWidget->AddToViewport();
+
+}
+
+UHUDWidget* AMyPlayerController::GetHUD()
+{
+	return UIHUDWidget;
+}
+
+void AMyPlayerController::SpawnPlayerStateSetting(AUnrealGAS_1Character* player)
+{
+	if (player && UIHUDWidget)
+	{
+		UIHUDWidget->SetPlayer(player);
+		UIHUDWidget->SetCurrentHealth(player->GetHealth());
+		UIHUDWidget->SetMaxHealth(player->GetMaxHealth());
+	}
+}
